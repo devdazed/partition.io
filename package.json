@@ -1,0 +1,10 @@
+{
+    "name": "partition.io"
+  , "version": "0.0.1"
+  , "description": "P2P Distributed Workload for NodeJS"
+  , "keywords": []
+  , "author": "Russell Bradberry <rbradberry@gmail.com>"
+  , "dependencies": {}
+  , "main": "index"
+  , "engines": { "node": "0.4.x" }
+}
