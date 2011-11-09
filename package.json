@@ -1,6 +1,6 @@
 {
     "name": "partition.io"
-  , "version": "0.0.1"
+  , "version": "0.0.2"
   , "description": "P2P Distributed Workload for NodeJS"
   , "repository": {"type": "git", "url": "git@github.com:devdazed/partition.io.git" }
   , "keywords": [ "partition", "distributed", "p2p" ]
