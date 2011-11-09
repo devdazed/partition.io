@@ -7,10 +7,10 @@ servent.on('listening', function(){
   /**
    * If we arent on our default port then we weren't
    * the first node, so connect to that one
-   */  
+   */
   if (servent.address().port !== port){
     servent.connect(port);
-  }  
+  }
 });
 
 /**
@@ -22,7 +22,6 @@ servent.on('error', function(err){
     servent.listen(0);
   }
 });
-
 servent.listen(port);
 
 /**
@@ -30,9 +29,28 @@ servent.listen(port);
  * params will be passed in directly from your function definition
  * callback set as the last param
  */
-app.testWorker = servent.createWorker('test', function(callback){
-  callback(Math.floor(Math.random()*101));
+var worker = servent.createWorker('random', function(callback){
+  callback(null, Math.floor(Math.random()*100000));
 });
 
-app.servent = servent;
+app.getSome = function(){
+  worker.distribute(function(job){
+    var numbers = [];
+
+    job.setTTL(5000); //wait a max of 5 seconds for all nodes to respond
+    job.on('data', function(data){
+      numbers.push(data);
+    });
+
+    //push the random number on to the data
+    job.on('end', function(){
+      console.log(numbers);
+    });
+
+    job.run();
+  });
+};
+
+
+
 module.exports = app;
