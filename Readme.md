@@ -95,7 +95,7 @@ back to Partition.IO.
       });
 
       /**
-       * Run our jab passing 1000 as the first parameter
+       * Run our job passing 1000 as the first parameter
        */
       job.run(1000);
     });
