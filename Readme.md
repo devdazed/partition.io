@@ -3,7 +3,7 @@
 
 Partition.IO is a P2P Distributed workload for NodeJS.  Partition.IO allows 
 you to create a homogeneous system that is shared-nothing and partition 
-tolerant.
+tolerant. This would be the "P" in CAP
 
 To install just use npm
 
@@ -70,13 +70,13 @@ back to Partition.IO.
       var numbers = [];
 
       /**
-       * If all our node don't respond in 5000ms, just get on with what data we
+       * If all our nodes don't respond in 5000ms, just get on with what data we
        * have (useful if accuracy doesn't need to be 100%)
        */
       job.setTTL(5000);
   
       /**
-       * Data is called once for each node that responds
+       * Data is emitted once for each node that responds
        */
       job.on('data', function(data){
         numbers.push(data);
@@ -87,12 +87,16 @@ back to Partition.IO.
        */
       job.on('error', console.error);
 
-      //push the random number on to the data
+      /**
+       * End is emitted when all nodes respond or when ttl expires
+       */
       job.on('end', function(){
         console.log(numbers);
       });
 
-      //returns a list of random numbers between 0 and 1000
+      /**
+       * Run our jab passing 1000 as the first parameter
+       */
       job.run(1000);
     });
 ```
