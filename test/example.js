@@ -29,25 +29,39 @@ servent.listen(port);
  * params will be passed in directly from your function definition
  * callback set as the last param
  */
-var worker = servent.createWorker('random', function(callback){
-  callback(null, Math.floor(Math.random()*100000));
+var worker = servent.createWorker('random', function(max, callback){
+  callback(null, Math.floor(Math.random()*max));
 });
 
 app.getSome = function(){
   worker.distribute(function(job){
     var numbers = [];
 
-    job.setTTL(5000); //wait a max of 5 seconds for all nodes to respond
+    /**
+     * If all our node don't respond in 5000ms, just get on with what data we
+     * have (useful if accuracy doesn't need to be 100%)
+     */
+    job.setTTL(5000);
+
+    /**
+     * Data is called once for each node that responds
+     */
     job.on('data', function(data){
       numbers.push(data);
     });
+    
+    /**
+     * Error is emitted if one of the callbacks calls back with error
+     */
+    job.on('error', console.error);
 
     //push the random number on to the data
     job.on('end', function(){
       console.log(numbers);
     });
 
-    job.run();
+    //returns a list of random numbers between 0 and 1000
+    job.run(1000);
   });
 };
 
