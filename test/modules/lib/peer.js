@@ -71,7 +71,7 @@ var Peer = function(id, socket, servent){
   this.socket.on('end', onEnd);
   
   this.rpc = new RpcModule(this)
- // console.log(this);
+  
 };
 
 /**
@@ -106,8 +106,8 @@ Peer.prototype.recv = function(message){
     switch(data.type){
       case 'event':  this.process(data); break; //the standard events
       case 'discovery': this.discover(data); break; //gets information about a peer
-      case 'rpc': this.rpc.requestEvent(data.data); break; //Pass data onto the rpc module
-      case 'newPeer':  break; //connects to a new peer
+      case 'rpc': this.rpc.emit('request', data.data); break; //Pass data onto the rpc module
+      case 'newPeer': this.servent.connect(data.port, data.host); break; //connects to a new peer
       case 'destroy': this.destroy(); break; //destoys the connection
     }
   }

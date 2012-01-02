@@ -56,7 +56,7 @@ var RpcModule = module.exports.RpcModule = function(peer) {
 
 	this.peer = peer;
 	this.id = peer.id;
-	this.vows = {}
+	this.vows = {};
 	this.functions = Object.create(globalFunctions);
 
 	this.on('request', this.requestEvent);
@@ -72,8 +72,8 @@ var RpcModule = module.exports.RpcModule = function(peer) {
 		this.set('Array', Object.keys(self.functions));
 		this.send();
 	});
-	peer.servent.emit('rpc', this)
-}
+	peer.servent.emit('rpc', this);
+};
 /***
  * Make it an event
  */
@@ -83,10 +83,12 @@ util.inherits(RpcModule, events.EventEmitter);
  * Write to the peer
  */
 RpcModule.prototype.write = function(data) {
+	
 	this.peer.send({
 		type : 'rpc',
 		data : data
 	});
+	
 };
 /***
  * Expose modules to every peer
@@ -101,7 +103,7 @@ RpcModule.prototype.expose = function(mod, object) {
 		for(var i = keys.length - 1; i >= 0; i--) {
 
 			var funcObj = object[keys[i]];
-			var funcName = keys[i]
+			var funcName = keys[i];
 			if( typeof (funcObj) == 'function') {
 
 				this.functions[mod + '.' + funcName] = funcObj;
@@ -123,10 +125,8 @@ RpcModule.prototype.expose = function(mod, object) {
  * Request event entry point for data
  */
 RpcModule.prototype.requestEvent = function(data) {
-	//console.log(data)
 	if((data.hasOwnProperty('result') || data.hasOwnProperty('error') ) && data.hasOwnProperty('id') && this.vows.hasOwnProperty(data.id)) {
 		var vow = this.runVows(data);
-		//console.log(this.vows)
 		return this.emit('handler', vow.handler, vow.exsosed, vow.params);
 	}
 	if(data.hasOwnProperty('error')) {
@@ -135,10 +135,10 @@ RpcModule.prototype.requestEvent = function(data) {
 	if(!data.hasOwnProperty('id')) {
 		return this.write(this.runError(32600, null));
 	}
-	if(!(data.hasOwnProperty('method') && typeof (data.method) === 'string')) {
+	if(!(data.hasOwnProperty('method') && typeof data.method === 'string')) {
 		return this.write(this.runError(32600, data.id));
 	}
-	if(!data.hasOwnProperty('params') && Array.isArray(data.params)) {
+	if(!data.hasOwnProperty('params') && !Array.isArray(data.params)) {
 		return this.write(this.runError(32602, data.id));
 	}
 	if(!this.functions.hasOwnProperty(data.method)) {
@@ -245,8 +245,7 @@ RpcModule.prototype.invoke = function(method, params, callBack) {
 		params : params,
 		callBack : callBack
 	};
-	
-//	console.log(this.vows[id])
+	//console.log(this.vows[id])
 	this.write({
 		id : id,
 		method : method,
